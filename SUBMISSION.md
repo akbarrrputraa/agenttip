@@ -1,14 +1,17 @@
 # AgentTip — Binance Agent ID Hackathon submission packet
 
-**Status: PREPARED, NOT SUBMITTED.** (Contract not yet deployed — see BUILD_LOG.md.
-Binance has not published a project-submission form URL as of 2026-11-18; check the
-announcement / @BinanceWallet before submitting.)
+**Status: DEPLOYED + LIVE, NOT YET SUBMITTED.** (Binance has not published a
+project-submission form URL as of 2026-11-18; check the announcement /
+@BinanceWallet before submitting. Source verification: Sourcify submission
+PENDING — the verification POST needs user approval (approval request timed out
+2026-11-18 ~20:05 WIB, NOT retried); BscScan verification via web form also
+pending.)
 
 - **Project name:** AgentTip
 - **Website:** https://akbarrrputraa.github.io/agenttip/
 - **Source code (open-source):** https://github.com/akbarrrputraa/agenttip
 - **Contract addresses (BNB Chain mainnet):**
-  - AgentTip: `TBD — pending deployment` (predicted, if deployed from vibe1 nonce 0: `0xc7c3434C7Fe1D133D4a50AAb261deE75A5C22629`)
+  - AgentTip: `0xc7c3434C7Fe1D133D4a50AAb261deE75A5C22629` — deployed 2026-11-18 ~20:00 WIB, tx `0x4636fd96586f6a0f1de0e262d1646a5be11eb87cc307ef546ca50560735c8352`, block 134315709, gas 493.351, deployer vibe1 `0x71c25d7E918E8B355A581Df6135B7a999fc1a17D`
   - Agent ID registry (used, not ours): `0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F`
 - **Reward receiving address:** `0x067b24c488bA1A6a967A920788AE375Ccc4f54AE`
 - **Team:** individual — Agent ID `0xakbarrr` / `0xakbarrr.ai`

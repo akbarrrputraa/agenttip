@@ -1,12 +1,13 @@
 # AgentTip — BUILD LOG
 
-## Status (2026-11-18 ~18:45 WIB)
+## Status (2026-11-18 ~20:05 WIB)
 
 - ✅ Contract written, compiled, gas-estimated
 - ✅ Public repo + live site (GitHub Pages)
-- ❌ **NOT DEPLOYED — blocked: BAW cannot deploy contracts (see below)**
-- ⏳ Verification (Sourcify + BscScan) pending deployment
-- ⏳ Submission packet prepared, NOT submitted (also: Binance has not published
+- ✅ **DEPLOYED — 0xc7c3434C7Fe1D133D4a50AAb261deE75A5C22629, block 134315709**
+- ✅ Smoke test: resolveName("0xakbarrr") = main wallet; checkIn done, streak 1
+- ⛔ Verification (Sourcify + BscScan) PENDING — Sourcify submit needs user approval (timed out ~20:05 WIB, not retried)
+- ⏳ Submission packet prepared, NOT submitted (Binance has not published
   a project-submission form URL yet as of 18 Nov)
 
 ## What was built
@@ -73,11 +74,39 @@ Evidence (2026-11-18 ~18:40 WIB):
 
 ## Next steps (in order)
 
-1. User approves funding vibe1 with ~0.0001 BNB (or picks another deploy route).
-2. Deploy via `deploy.js`, record address/tx/block/gas in `deployed.json`.
-3. Update `docs/config.js` + README, push, confirm site shows the contract.
-4. Verify Sourcify (then BscScan), record links.
-5. Smoke-test on the live site: resolve `0xakbarrr`, check-in, small tip — all via
-   the user's own wallet in the browser (BAW cannot do the browser clicks).
+1. ✅ User approved funding vibe1 with ~0.0001 BNB (2026-11-18 ~19:59 WIB).
+2. ✅ Deploy via `deploy.js`, record address/tx/block/gas in `deployed.json`.
+3. ✅ Update `docs/config.js` + README, push, confirm site shows the contract.
+4. ⛔ Verify Sourcify (then BscScan) — Sourcify POST needs user approval (request timed out ~20:05 WIB; do NOT retry unless the user asks). BscScan via web form needs a browser task.
+5. ✅ Smoke-test: resolve `0xakbarrr` ✓, check-in ✓ (streak 1, totalCheckIns 1 — first of 30 interactors).
 6. Hand the finished SUBMISSION.md to the parent for Binance submission once the
    submission form URL is known.
+
+## Deployment record (2026-11-18 ~20:00 WIB)
+
+- Funding: `baw wallet send` BLOCKED (error 351703: recipient not in address book —
+  adding it needs the Binance Wallet app). Workaround within the same approval:
+  `baw contract-call` plain value transfer (preview clean: Send, 0.0001 BNB,
+  simulationCode 000000000, risks empty) — executed, tx
+  `0xcc16955b95341ca018e9012038eb52eeb1cc60bec230678a96834f65cc35dbe4`,
+  block 134315667, status 1, gas 21,000. vibe1 balance verified 0.0001 BNB.
+- Deploy: `node deploy.js` first failed (invalid private key — wallets.json uses
+  `private_key`, script read `privateKey`; fixed deploy.js to accept both).
+  Second run OK: deploy tx
+  `0x4636fd96586f6a0f1de0e262d1646a5be11eb87cc307ef546ca50560735c8352`,
+  block 134315709, gasUsed 493,351, status 1. Contract address
+  `0xc7c3434C7Fe1D133D4a50AAb261deE75A5C22629` — EXACTLY the predicted address.
+- Site: `docs/config.js` updated (address + block 134315709), commit 7c0bfcc
+  pushed; live config.js verified serving the contract address.
+- Spend: main 0.00063121 → 0.00052010 BNB (funding 0.0001 + funding gas
+  ~0.00001006 at ~0.48 gwei BAW gas price); vibe1 0.0001 → 0.00007533 BNB after
+  deploy gas 0.00002467. Total gas spent ~0.0000347 BNB — well within budget.
+- Smoke test: `resolveName("0xakbarrr")` → main wallet ✓. `checkIn(agentId)`
+  via BAW (preview clean, value 0), tx
+  `0x1892b167beec748f1ee18f01cbc66ce77322f6a8beb82bb40ac6798794af731f`,
+  block 134317242, status 1, gas 96,371. Verified on-chain: streakOf = 1,
+  totalCheckIns = 1. First Agent ID interactor counted (1/30).
+- Sourcify: GET status shows match null (unverified). POST /v2/verify with the
+  standard JSON triggered a user-confirmation approval that TIMED OUT (~20:05 WIB)
+  — submission NOT performed, do NOT retry unless the user asks. BscScan
+  verification (web form, no API key on hand) still to do via browser task.
