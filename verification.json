@@ -1,0 +1,23 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "AgentTip.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.26;\n\n/// @title AgentTip — tip any Agent ID by its .ai name, plus free daily check-ins\n/// @notice Agent ID is used as identity + payments. No token, no fees, no paid\n///         features, no owner powers over user funds. There is no owner at all:\n///         no pause, no mint, no tax, no upgradeability, no withdraw function.\n///         Plain BNB sent to this contract reverts (no receive/fallback), so\n///         funds can never get stuck here. Tips forward 100% of msg.value.\n/// @dev Agent ID names are lowercase as claimed on SPACE ID. The token ID of a\n///      name is keccak256(name) WITHOUT the \".ai\" suffix, e.g.\n///      keccak256(\"0xakbarrr\") = 0xc06fa04e24f3172097e5e033c10428f9686c5391b194ed0497f3ed1c6acf585b.\n///      The frontend lowercases and strips a trailing \".ai\" before calling.\ninterface IAgentId {\n    function ownerOf(uint256 tokenId) external view returns (address);\n    function balanceOf(address owner) external view returns (uint256);\n}\n\ncontract AgentTip {\n    IAgentId public constant AGENT_ID =\n        IAgentId(0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F);\n\n    uint256 public totalTipped;\n    uint256 public totalTips;\n    uint256 public totalCheckIns;\n\n    /// @notice tokenId => UTC day number (block.timestamp / 86400) of last check-in\n    mapping(uint256 => uint256) public lastCheckInOf;\n    /// @notice tokenId => current consecutive-day streak\n    mapping(uint256 => uint256) public streakOf;\n\n    event Tipped(\n        address indexed from,\n        uint256 indexed agentId,\n        address indexed to,\n        uint256 amount,\n        string name\n    );\n    event CheckedIn(\n        uint256 indexed agentId,\n        address indexed wallet,\n        uint256 day,\n        uint256 streak\n    );\n\n    /// @notice Token ID for an Agent ID name (no \".ai\" suffix).\n    function agentIdOf(string calldata name) public pure returns (uint256) {\n        return uint256(keccak256(bytes(name)));\n    }\n\n    /// @notice Resolve a name to its owner's address. Returns address(0) if\n    ///         the name is not registered (registry ownerOf reverts then).\n    function resolveName(string calldata name) public view returns (address) {\n        uint256 id = agentIdOf(name);\n        try AGENT_ID.ownerOf(id) returns (address owner) {\n            return owner;\n        } catch {\n            return address(0);\n        }\n    }\n\n    /// @notice Tip an Agent ID by name. Forwards 100% of msg.value to the\n    ///         resolved owner. No fee is taken by this contract or anyone.\n    function tipByName(string calldata name) external payable {\n        require(msg.value > 0, \"AgentTip: zero tip\");\n        uint256 id = agentIdOf(name);\n        address to = resolveName(name);\n        require(to != address(0), \"AgentTip: name not registered\");\n        totalTipped += msg.value;\n        totalTips += 1;\n        emit Tipped(msg.sender, id, to, msg.value, name);\n        (bool ok, ) = to.call{value: msg.value}(\"\");\n        require(ok, \"AgentTip: transfer failed\");\n    }\n\n    /// @notice Free daily check-in for Agent ID holders. Caller passes their\n    ///         own Agent ID tokenId; ownership is verified on-chain.\n    ///         One check-in per Agent ID per UTC day. Consecutive days build\n    ///         the streak; a missed day resets it to 1.\n    function checkIn(uint256 agentId) external {\n        require(\n            AGENT_ID.ownerOf(agentId) == msg.sender,\n            \"AgentTip: not Agent ID owner\"\n        );\n        uint256 day = block.timestamp / 86400;\n        uint256 last = lastCheckInOf[agentId];\n        require(day > last, \"AgentTip: already checked in today\");\n        uint256 streak = (last == day - 1) ? streakOf[agentId] + 1 : 1;\n        lastCheckInOf[agentId] = day;\n        streakOf[agentId] = streak;\n        totalCheckIns += 1;\n        emit CheckedIn(agentId, msg.sender, day, streak);\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode"
+        ]
+      }
+    }
+  }
+}
