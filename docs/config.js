@@ -1,7 +1,7 @@
 // AgentTip frontend config — fill CONTRACT_ADDRESS + DEPLOY_BLOCK after deployment.
 window.AGENTTIP = {
-  CONTRACT_ADDRESS: '0x0000000000000000000000000000000000000000', // TODO: deployed address
-  DEPLOY_BLOCK: 0, // TODO: deployment block (for event history)
+  CONTRACT_ADDRESS: '0xc7c3434C7Fe1D133D4a50AAb261deE75A5C22629',
+  DEPLOY_BLOCK: 134315709, // deployment block (for event history)
   CHAIN_ID: 56,
   RPCS: [
     'https://bsc-dataseed.binance.org',

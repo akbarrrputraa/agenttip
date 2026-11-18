@@ -18,7 +18,9 @@ async function main() {
     '0x71c25d7e918e8b355a581df6135b7a999fc1a17d');
   if (!vibe1) throw new Error('vibe1 key not found');
   const provider = new ethers.JsonRpcProvider(RPCS[0]);
-  const signer = new ethers.Wallet(vibe1.privateKey, provider);
+  const pk = vibe1.private_key || vibe1.privateKey;
+  if (!pk) throw new Error('vibe1 key not found');
+  const signer = new ethers.Wallet(pk, provider);
   console.log('deployer:', signer.address);
   console.log('balance BNB:', ethers.formatEther(await provider.getBalance(signer.address)));
   const abi = JSON.parse(fs.readFileSync('AgentTip.abi.json', 'utf8'));
