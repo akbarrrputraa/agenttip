@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentTip — tip any Agent ID by name</title>
+<meta name="description" content="Tip any Agent ID by its .ai name, and check in daily to build an on-chain streak. No fees, no token.">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0d1117; color: #e6edf3; }
+  header { padding: 28px 16px 8px; text-align: center; }
+  h1 { margin: 0; font-size: 32px; letter-spacing: -0.5px; }
+  h1 span { color: #f0b90b; }
+  p.sub { color: #8b949e; margin: 8px 0 0; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 18px; margin: 14px 0; }
+  .card h2 { margin: 0 0 6px; font-size: 18px; }
+  .card p { color: #8b949e; margin: 6px 0 12px; font-size: 14px; line-height: 1.5; }
+  label { display: block; font-size: 13px; color: #8b949e; margin: 10px 0 4px; }
+  input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: #e6edf3; font-size: 15px; }
+  button { margin-top: 12px; padding: 11px 18px; border: 0; border-radius: 8px; background: #f0b90b; color: #111; font-weight: 700; font-size: 15px; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.ghost { background: transparent; color: #e6edf3; border: 1px solid #30363d; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; word-break: break-all; }
+  .ok { color: #3fb950; } .warn { color: #d29922; } .err { color: #f85149; }
+  .stat { display: inline-block; margin: 4px 16px 4px 0; font-size: 14px; }
+  .stat b { font-size: 18px; color: #fff; }
+  #activity li { font-size: 13px; margin: 6px 0; color: #c9d1d9; word-break: break-all; }
+  #activity ul { padding-left: 18px; }
+  footer { text-align: center; color: #8b949e; font-size: 13px; padding: 8px 16px 32px; line-height: 1.6; }
+  a { color: #58a6ff; }
+  .banner { background: #3b2f00; border: 1px solid #d29922; color: #ffd866; border-radius: 10px; padding: 12px 14px; margin: 14px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Agent<span>Tip</span></h1>
+  <p class="sub">Tip any Agent ID by its .ai name. Check in daily, build a streak. No fees, no token.</p>
+</header>
+<main>
+  <div id="deployBanner" class="banner" style="display:none">Contract not deployed yet — actions are disabled until the contract address is set.</div>
+
+  <div class="card">
+    <div class="row">
+      <button id="connectBtn">Connect wallet</button>
+      <span id="walletInfo" class="mono"></span>
+    </div>
+    <p id="stats"><span class="stat">Total tipped: <b id="statTipped">–</b></span><span class="stat">Tips: <b id="statTips">–</b></span><span class="stat">Check-ins: <b id="statCheckins">–</b></span></p>
+  </div>
+
+  <div class="card">
+    <h2>Tip by name</h2>
+    <p>Enter an Agent ID name (with or without <span class="mono">.ai</span>). The tip goes 100% to the wallet that owns that name — this contract takes no fee.</p>
+    <label for="tipName">Agent ID name</label>
+    <input id="tipName" placeholder="0xakbarrr" autocomplete="off">
+    <div class="row">
+      <button id="resolveBtn" class="ghost">Resolve</button>
+      <span id="resolveOut" class="mono"></span>
+    </div>
+    <label for="tipAmount">Amount (BNB)</label>
+    <input id="tipAmount" type="number" min="0" step="0.001" placeholder="0.01">
+    <button id="tipBtn" disabled>Send tip</button>
+    <p id="tipStatus" class="mono"></p>
+  </div>
+
+  <div class="card">
+    <h2>Daily check-in</h2>
+    <p>Free, gas only. One check-in per Agent ID per UTC day. Consecutive days build your on-chain streak.</p>
+    <label for="myName">Your Agent ID name</label>
+    <input id="myName" placeholder="0xakbarrr" autocomplete="off">
+    <div class="row">
+      <button id="streakBtn" class="ghost">Show my streak</button>
+      <span id="streakOut" class="mono"></span>
+    </div>
+    <button id="checkinBtn" disabled>Check in today</button>
+    <p id="checkinStatus" class="mono"></p>
+  </div>
+
+  <div class="card">
+    <h2>Recent activity</h2>
+    <div id="activity"><p>Loading…</p></div>
+  </div>
+</main>
+<footer>
+  <p><b>Risk note:</b> tips are irreversible — double-check the name before sending. This site never asks for your seed phrase or private key, never stores a login session, and never signs anything on your behalf. Every transaction is confirmed by you in your own wallet.</p>
+  <p>Contract: <span id="contractLink" class="mono">not deployed yet</span><br>
+  Source code: <a href="https://github.com/akbarrrputraa/agenttip" target="_blank" rel="noopener">github.com/akbarrrputraa/agenttip</a></p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.17.0/dist/ethers.umd.min.js"></script>
+<script src="./config.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
